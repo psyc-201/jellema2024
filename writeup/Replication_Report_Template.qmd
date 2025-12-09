@@ -1,0 +1,1014 @@
+---
+title: "Replication of Social Intuition: Behavioral and Neurobiological Considerations by Jellema et al. (2024, Frontiers in Psychology)"
+author: "Wilder Hartwell (wphartwell@ucsd.edu)"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+format:
+  html:
+    toc: true
+    toc_depth: 3
+---
+
+# Introduction
+
+**Link to experiment:** <https://psyc-201.github.io/jellema2024/jellema2024_18.html>
+
+This study was a replication of Jellema et al. (2024), "Social Intuition: Behavioral and Neurobiological Considerations." This was a social and developmental psychology experiment, looking at social intuition and its relationship to autistic traits. This study asked whether participants could implicitly and quickly learn the disposition of someone towards them, as well as whether this ability is decreased as autistic traits increase. To answer this question, Jellema et al. (2024) used social stimuli in an implicit learning paradigm.
+
+In the acquisition phase, face morphs of dynamic facial expressions (happy or angry) in which their gaze shifts towards or away from the participant were shown to participants across multiple trials. All faces were either identity A or B. Identity A and B were showing either a positive or negative disposition towards the participant. In the test phase, implicit learning was tested using composites of maximally smiling or frowning identities A and B, progressively shifting towards more of one identity than the other. Participants were tasked with indicating whether the composite face was closer to identity A or B. The smiling and the frowning faces were tested separately. The assumption was that if the participant had learned the disposition of the two identities, they would indicate the smiling face looked more like identity A (positive disposition) and the frowning face more like identity B (negative disposition). In the original experiment, there was also a nonsocial task, but that was not replicated due to feasibility on a very short timeline.
+
+# Methods
+
+35 adult participants were recruited for this study. The study was run on Prolific and participants were compensated for their time. The experiment took approximately 10-15 minutes to complete. Google Gemini was used to generate the face morph stimuli. The experiment was coded in JsPsych.
+
+There were two blocks of 28 trials in the acquisition phase. In the acquisition phase, the happy face condition started with gaze forward, smiling, and gradually shifted to gaze away from the participant, frowning. The angry condition started with gaze forward, frowning, and gradually shifted to gaze away from the participant, smiling. The clips were 2s long.
+
+There were four blocks of 5 trials in the test phase. The test phase began with a combined face vertically divided into 60% maximally smiling identity A and 40% maximally smiling identity B and progressed in steps of 5% towards 60% maximally smiling identity B and 40% maximally smiling identity A. Participants saw this four times. Then the same thing was repeated for the frowning faces, and the participants saw this four times as well. Participants were asked to judge the likeness of these composite faces to the neutral faces of identities A and B. At the end, participants were asked questions probing whether they detected the contingencies in the experiment and if they did their data was excluded.
+
+## Power Analysis
+
+In RStudio, an ANOVA power analysis using the smallest original main effect of ηp^2^ = 0.12 (disposition) found that I would need 30 participants to achieve a power of 80%. Thus, I planned to recruit 35 participants to account for exclusions. This is a feasible number of participants to recruit with the resources available.
+
+## Planned Sample
+
+I plan to collect 35 participants on Prolific in one day. No screening will occur other than participants being 18 or older.
+
+## Materials
+
+> Participants were presented with short video clips (2 s) depicting the frontal face view of an actor (agent A or agent B; Figure 1). Their facial expressions and gaze directions changed smoothly over the course of the clips, displaying a natural facial movement. (Jellema et al., 2024, p. 5)
+>
+> Actor A started with a happy expression looking straight ahead (at the observer), which then gradually morphed into an angry expression, while simultaneously the eye direction gradually moved away from the observer (so that in the final frame the actor looked angry away from the observer). The clips were also played backwards an equal number of times. Thus, it can be said that agent A had a positive disposition toward the observer. Agent B started with a happy expression looking away from the observer, which gradually morphed into an angry expression, while simultaneously the eye direction gradually moved toward the observer (clips were also played backwards an equal number of times). Actor B thus had a negative disposition toward the observer. (Jellema et al., 2024, p. 5)
+
+The videos in this replication had all of the same characteristics, except instead of being computer-generated face morphs they were videos of an actual person that had been manipulated to slightly alter the identity of the actor to create identities A and B.
+
+> In the subsequent test phase, an indirect measure was used to find out whether any implicit learning had taken place. This measure involved a morph of the facial expressions of the two identities A and B, flanked by the original neutral faces of these two identities. The eyes were covered by black boxes. The morphed identity was composed of 60% of the maximally smiling actor A and 40% the maximally smiling agent B (happy morph), and then progressed in steps of 5% toward 40% of the maximally smiling actor A and 60% the maximally smiling agent B. The same procedure was followed for the frowning actors A and B. Participants had to indicate for each morphed identity whether it resembled more closely agent A (who had a positive disposition toward the observer) or agent B (who had a negative disposition toward the observer) (Jellema et al., 2024, p. 5)
+
+The composite and neutral photos in this replication had all of the same characteristics, except instead of being computer-generated face morphs they were photos of an actual person that had been manipulated to slightly alter the identity of the actor.
+
+The original study used the Autism Quotient (AQ), whereas the replication used the Autism Quotient-10 (AQ-10), which has 10 questions instead of 50. This adjustment was made to make the experiment shorter, which is more appropriate for an online Prolific setting.
+
+> Whether or not the participant had consciously detected the cue-identity contingencies was determined in a short debrief session, in which a series of questions were asked probing any awareness of the contingencies. (Jellema et al., 2024, p. 5)
+
+This was followed in the replication. Specifically, there were two questions that asked “What was the disposition of Identity \[A or B\] towards you?”
+
+## Procedure
+
+First, participants signed the consent form and then answered the AQ-10. The experiment began with instructions that showed participants identities A and B making neutral faces side by side, in addition to instructing them to focus on the videos and be ready for attention checks. Next, participants were shown the video clips (described in materials) forwards and backwards the same number of times and in a randomized order. There were 56 acquisition trials split across two blocks with a break in between. There were four attention checks spaced roughly evenly across the acquisition trials that asked participants to select the correct color word (i.e. If you are paying attention, select 'yellow.'). The test trials began with a screen displaying the instructions. Then, participants were shown each set of five test images two times, alternating between the smiling and frowning conditions. Next, participants answered two questions probing whether they had detected the contingencies in the experiment. Lastly, participants were debriefed and provided their completion information for Prolific.
+
+## Analysis Plan
+
+### **Load packages**
+
+```{r install/loading packages}
+library(tidyverse)
+library(ggplot2) # plotting
+library(ggthemes) # good for making plots pretty
+library(effectsize)
+library(knitr)
+library(kableExtra)
+library(purrr)
+library(tidyr)
+library(ggpubr)
+library(DescTools)
+
+```
+
+### **Import .csv and Transpose**
+
+Data needs to be transformed into long format
+
+```{r import csv and transpose}
+#import csv
+data <- read.csv(file = "/Users/wilderhartwell/Documents/jellema2024/data/final_data_JSON.csv", header = FALSE)
+
+                 
+#make tibble
+data <- tibble(data)
+
+#filter out empty rows that jsPsych sometimes adds
+data <- data %>%
+  mutate(across(everything(), ~na_if(.x, ""))) %>%
+  mutate(across(everything(), ~na_if(.x, " "))) %>%
+  mutate(across(everything(), ~na_if(.x, "NA"))) %>%
+  filter(!if_all(everything(), is.na))
+
+# tranpose tibble
+data_long <- as.data.frame(t(data))
+
+# Rename columns
+colnames(data_long) <- as.character(unlist(data_long[1, ]))  # make first row the column names
+data_long <- data_long[-1, ] 
+
+```
+
+### Parse JSONs
+
+The questionnaires output as JSONs that then need to be parsed before the data can be used.
+
+```{r parse JSONs}
+# parse JSONs
+data_long <- data_long |>
+  mutate(
+    Question_parsed = map(Question, jsonlite::fromJSON)
+  ) |>
+  unnest_wider(Question_parsed)
+  
+data_long <- data_long |>
+  mutate(
+    Check_parsed = map(Check, jsonlite::fromJSON))|>
+  unnest_wider(Check_parsed)
+
+
+```
+
+### Replace Strings with Numeric
+
+```{r replace strings with numeric}
+
+# Recode words into numeric values
+data_long <- data_long |>
+  mutate(Q1_num = case_when(
+      Question1 %in% c("Slightly Agree", "Definitely Agree") ~ 1,
+      Question1 %in% c("Slightly Disagree", "Definitely Disagree") ~ 0,
+    TRUE ~ NA_real_ # fallback for anything else 
+    )) |>
+    mutate(Q2_num = case_when(
+      Question2 %in% c("Slightly Agree", "Definitely Agree") ~ 1,
+      Question2 %in% c("Slightly Disagree", "Definitely Disagree") ~ 0,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(Q3_num = case_when(
+      Question3 %in% c("Slightly Agree", "Definitely Agree") ~ 1,
+      Question3 %in% c("Slightly Disagree", "Definitely Disagree") ~ 0,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(Q4_num = case_when(
+      Question4 %in% c("Slightly Agree", "Definitely Agree") ~ 1,
+      Question4 %in% c("Slightly Disagree", "Definitely Disagree") ~ 0,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(Q5_num = case_when(
+      Question5 %in% c("Slightly Agree", "Definitely Agree") ~ 1,
+      Question5 %in% c("Slightly Disagree", "Definitely Disagree") ~ 0,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(Q6_num = case_when(
+      Question6 %in% c("Slightly Agree", "Definitely Agree") ~ 1,
+      Question6 %in% c("Slightly Disagree", "Definitely Disagree") ~ 0,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(Q7_num = case_when(
+      Question7 %in% c("Slightly Agree", "Definitely Agree") ~ 1,
+      Question7 %in% c("Slightly Disagree", "Definitely Disagree") ~ 0,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(Q8_num = case_when(
+      Question8 %in% c("Slightly Agree", "Definitely Agree") ~ 1,
+      Question8 %in% c("Slightly Disagree", "Definitely Disagree") ~ 0,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(Q9_num = case_when(
+      Question9 %in% c("Slightly Agree", "Definitely Agree") ~ 1,
+      Question9 %in% c("Slightly Disagree", "Definitely Disagree") ~ 0,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(Q10_num = case_when(
+      Question10 %in% c("Slightly Agree", "Definitely Agree") ~ 1,
+      Question10 %in% c("Slightly Disagree", "Definitely Disagree") ~ 0,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(CheckQ1_num = case_when(
+      CheckQ1 %in% c("I do not know") ~ 0,
+      CheckQ1 %in% c("Negative") ~ 1,
+      CheckQ1 %in% c("Neutral") ~ 2,
+      CheckQ1 %in% c("Positive") ~ 3,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(CheckQ2_num = case_when(
+      CheckQ2 %in% c("I do not know") ~ 0,
+      CheckQ2 %in% c("Negative") ~ 1,
+      CheckQ2 %in% c("Neutral") ~ 2,
+      CheckQ2 %in% c("Positive") ~ 3,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(frown50_1_num = case_when(
+      frown50_1 %in% c("f") ~ 0,
+      frown50_1 %in% c("j") ~ 1,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(frown50_2_num = case_when(
+      frown50_2 %in% c("f") ~ 0,
+      frown50_2 %in% c("j") ~ 1,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(smile50_1_num = case_when(
+      smile50_1 %in% c("f") ~ 0,
+      smile50_1 %in% c("j") ~ 1,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(smile50_2_num = case_when(
+      smile50_2 %in% c("f") ~ 0,
+      smile50_2 %in% c("j") ~ 1,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(frown50_1_cor_num = case_when(
+      frown50_1_cor %in% c("FALSE") ~ 0,
+      frown50_1_cor %in% c("TRUE") ~ 1,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(frown50_2_cor_num = case_when(
+      frown50_2_cor %in% c("FALSE") ~ 0,
+      frown50_2_cor %in% c("TRUE") ~ 1,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(smile50_1_cor_num = case_when(
+      smile50_1_cor %in% c("FALSE") ~ 0,
+      smile50_1_cor %in% c("TRUE") ~ 1,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(smile50_2_cor_num = case_when(
+      smile50_2_cor %in% c("FALSE") ~ 0,
+      smile50_2_cor %in% c("TRUE") ~ 1,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(gender_num = case_when(
+      Q_gender %in% c("Woman") ~ 0,
+      Q_gender %in% c("Man") ~ 1,
+      Q_gender %in% c("Nonbinary/other") ~ 2,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(age_num = case_when(
+      Q_age %in% c("18-24") ~ 0,
+      Q_age %in% c("25-34") ~ 1,
+      Q_age %in% c("35-44") ~ 2,
+      Q_age %in% c("45-54") ~ 3,
+      Q_age %in% c("55-64") ~ 4,
+      Q_age %in% c("65+") ~ 5,
+      TRUE ~ NA_real_
+    ))
+```
+
+### **Prepare main data frame**
+
+#### **Calculate Scores**
+
+```{r calculate scores}
+
+#the difference between the frown and smile at 50/50 (used in correlation)
+FrownScore <- data_long$frown50_1_cor_num + data_long$frown50_2_cor_num #sum the frown score
+FrownScore #print the frown score
+SmileScore <- data_long$smile50_1_cor_num + data_long$smile50_2_cor_num #sum the smile score
+SmileScore #print the smile score
+
+TestScore <- FrownScore - SmileScore #calculate TestScore
+TestScore <- abs(TestScore) # turn negative numbers into positive numbers (absolute value)
+
+data_long <- bind_cols(data_long, TestScore)
+
+#Score the AQ-10
+AQScore <- rowSums(data_long[, c("Q1_num","Q2_num", "Q3_num", "Q4_num", "Q5_num", "Q6_num", "Q7_num", "Q8_num", "Q9_num", "Q10_num")])
+as.data.frame(AQScore)
+data_long <- bind_cols(data_long, AQScore)
+data_long <- data_long %>%
+  rename(AQScore = `...61`)
+
+#make tibble again
+data_long <- tibble(data_long)
+
+```
+
+#### **Exclude participants**
+
+```{r Exclude participants}
+# Calculate total participants and store it in n_total
+n_total <- n_distinct(data_long$ID)
+
+# Exclude for detecting contingencies
+excluded_detection <- data_long %>%
+  filter(CheckQ1 == "Positive" & CheckQ2 == "Negative") %>%
+  pull(ID)
+
+# Exclude participants that missed all 50/50 response trials
+excluded_missing <- data_long %>%
+  filter(is.na(frown50_1_num) & 
+         is.na(smile50_1_num) & 
+         is.na(frown50_2_num) & 
+         is.na(smile50_2_num)) %>%
+  pull(ID)
+
+
+# Collect initial exclusion IDs
+excluded_initial <- unique(c(excluded_detection, excluded_missing))
+
+# Remove these from main dataset before further checks
+data_complete <- data_long %>%
+  filter(!(ID %in% excluded_initial))
+
+
+# Exclude for out of range reaction time and failing attention checks
+rt_attention_cols  <- c("rt_attention_1", "rt_attention_2", "rt_attention_3", "rt_attention_4")
+acc_attention_cols <- c("attention_1",   "attention_2",   "attention_3",   "attention_4")
+rt_test_cols       <- c("rt_frown_1", "rt_smile_1", "rt_frown_2", "rt_smile_2")
+
+# Convert columns 
+data_complete <- data_complete %>%
+  mutate(across(all_of(c(rt_attention_cols, rt_test_cols)), ~ as.numeric(as.character(.))),
+         across(all_of(acc_attention_cols), ~ as.integer(as.character(.))))
+
+data_complete <- data_complete %>%
+  mutate(
+    fail_attention_rt  = if_any(all_of(rt_attention_cols),  ~ .x > 11000),
+    fail_attention_acc = if_any(all_of(acc_attention_cols), ~ .x == 0),
+    fail_test_rt       = if_any(all_of(rt_test_cols),       ~ (.x <= 400 | .x > 30000))
+  )
+
+# Build a table of participants and reasons for exclusion 
+
+# Helper: convert logical flags into reason labels
+reason_map <- c(
+  fail_detection      = "Detected Contingencies",
+  fail_missing        = "Missing All 50/50 Trials",
+  fail_attention_rt   = "Attention RT > 11000",
+  fail_attention_acc  = "Incorrect Attention Check",
+  fail_test_rt        = "Test Trial RT Out of Range"
+)
+
+# Initial exclusion table
+initial_df <- tibble(
+    ID = excluded_initial,
+    fail_detection = excluded_initial %in% excluded_detection,
+    fail_missing   = excluded_initial %in% excluded_missing
+) %>%
+    pivot_longer(
+        cols = starts_with("fail_"),
+        names_to = "flag",
+        values_to = "value"
+    ) %>%
+    filter(value) %>%
+    mutate(Reason = reason_map[flag] %||% NA_character_) %>%
+    select(ID, Reason)
+
+# DIAGNOSTIC — must be separate
+data_complete %>%
+  select(ID, starts_with("fail_")) %>%
+  pivot_longer(cols = starts_with("fail_"),
+               names_to = "flag", values_to = "value") %>%
+  count(flag, value)
+
+  
+# Build long-format table of later RT/ACC exclusions
+late_df <- data_complete %>%
+  select(ID, starts_with("fail_")) %>%
+  distinct() %>%
+  pivot_longer(
+    cols      = starts_with("fail_"),
+    names_to  = "flag",
+    values_to = "value"
+  ) %>%
+  filter(value == TRUE) %>%
+  mutate(
+    Reason = dplyr::recode(flag, !!!reason_map, .default = NA_character_)
+  ) %>%
+  select(ID, Reason)
+
+# Combine ALL reasons
+excluded_df_long <- bind_rows(initial_df, late_df) %>%
+  distinct()
+
+# Save excluded list
+write.csv(excluded_df_long, "excluded_participants_long.csv", row.names = FALSE)
+
+# 6. Final cleaned dataset
+all_excluded_ids <- unique(excluded_df_long$ID)
+
+data_complete <- data_long %>%
+  filter(!(ID %in% all_excluded_ids))
+
+# Print summary
+cat("======== EXCLUSION SUMMARY ========\n")
+cat("Total participants:", n_total, "\n")
+cat("Excluded:", length(all_excluded_ids), "\n")
+cat("Remaining:", n_distinct(data_complete$ID), "\n\n")
+
+cat("Sample of multi-reason exclusions:\n")
+print(head(excluded_df_long))
+
+```
+
+### **Demographics**
+
+```{r demographics}
+# Age distribution
+ggplot(data_complete, aes(x = age_num)) +
+  geom_histogram(binwidth = 1, fill = "#1976D2", alpha = 0.7) +
+  labs(title = "Age Distribution",
+       x = "Age",
+       y = "Count")
+summary(data_complete$age_num)
+
+# Age summary
+data_complete %>%
+  summarise(
+    mean_age = mean(age_num, na.rm = TRUE),
+    sd_age = sd(age_num, na.rm = TRUE),
+    min_age = min(age_num, na.rm = TRUE),
+    max_age = max(age_num, na.rm = TRUE),
+    mode_age = Mode(age_num) 
+  ) %>%
+  kable(digits = 2) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+
+# Gender distribution
+ggplot(data_complete, aes(x = gender_num)) +
+  geom_histogram(binwidth = 1, fill = "#1976D2", alpha = 0.7) +
+  labs(title = "Gender Distribution",
+       x = "Gender",
+       y = "Count")
+```
+
+### **Mean score**
+
+```{r mean score}
+# sum of scores on 50/50 trials
+acc_sum <- data_complete$frown50_1_cor_num + data_complete$frown50_2_cor_num + data_complete$smile50_1_cor_num + data_complete$smile50_2_cor_num
+as.data.frame(acc_sum)
+
+data_complete <- bind_cols(data_complete, acc_sum)
+
+data_complete <- data_complete %>%
+  rename(acc_sum = `...62`)
+# mean TestScore
+acc_mean <- mean(TestScore)
+acc_mean
+# mean of sum of scores on 50/50 trials
+acc_mean_sum <- mean(data_complete$frown50_1_cor_num + data_complete$frown50_2_cor_num + data_complete$smile50_1_cor_num + data_complete$smile50_2_cor_num)
+acc_mean_sum
+# Austim Quotient-10 mean score
+AQ_mean <- mean(data_complete$...61)
+AQ_mean
+```
+
+### Plot Accuracy and AQ-10 Scores
+
+```{r accuracy and AQ-10 plot}
+
+# histogram of accuracy on test trials
+histogram <- ggplot(data_complete, aes(x = acc_sum)) +
+  geom_histogram(
+    binwidth = 1,        # adjust as needed
+    fill = "#d96627",
+    color = "black",
+    alpha = 0.7
+  ) +
+  scale_y_continuous(breaks = c(0, 2, 4, 6, 8, 10, 12)) +
+  theme_classic() +
+  theme(
+    legend.position = "none",
+    
+    # Axis line color
+    axis.line = element_line(color = "darkgray"),
+    
+    # Tick mark color
+    axis.ticks = element_line(color = "darkgray"),
+    
+    # Axis text color
+    axis.text = element_text(color = "black"),
+    
+    # Title color
+    plot.title = element_text(color = "black", size = 14, face = "bold"),
+    
+    # Axis label color
+    axis.title = element_text(color = "black", size = 12)
+  ) +
+  labs(
+    title = "Distribution of Test Scores",
+    x = "Test Score",
+    y = "Count"
+  )
+histogram # show histogram
+
+# save histogram
+ggsave(
+  "accdistribution.png",
+  plot = histogram,
+  width = 5,    # inches
+  height = 4,   # inches
+  dpi = 300
+)
+
+# histogram of AQ-10 scores
+histogramAQ <- ggplot(data_complete, aes(x = AQScore)) +
+  geom_histogram(
+    binwidth = 1,        # adjust as needed
+    fill = "#d96627",
+    color = "black",
+    alpha = 0.7
+  ) +
+  scale_y_continuous(breaks = c(0, 2, 4, 6, 8, 10)) +
+  theme_classic() +
+  theme(
+    legend.position = "none",
+    
+    # Axis line color
+    axis.line = element_line(color = "darkgray"),
+    
+    # Tick mark color
+    axis.ticks = element_line(color = "darkgray"),
+    
+    # Axis text color
+    axis.text = element_text(color = "black"),
+    
+    # Title color
+    plot.title = element_text(color = "black", size = 14, face = "bold"),
+    
+    # Axis label color
+    axis.title = element_text(color = "black", size = 12)
+  ) +
+  labs(
+    title = "Distribution of AQ-10 Scores",
+    x = "AQ-10 Score",
+    y = "Count"
+  )
+histogramAQ # show histogram
+
+# save histogram
+ggsave(
+  "AQ-10distribution.png",
+  plot = histogramAQ,
+  width = 6,    # inches
+  height = 4,   # inches
+  dpi = 300
+)
+
+```
+
+### **ANOVA**
+
+This spreadsheet is constructed outside of R without the excluded participants
+
+```{r import ANOVA spreadsheet}
+# import csv
+A_data <- read.csv(file = "/Users/wilderhartwell/Documents/jellema2024/data/Data_collection_1/final_data_ANOVA.csv")
+
+# turn letter responses into numbers
+A_data <- A_data |>
+  mutate(Response_num = case_when(
+      Response %in% c("f") ~ 0,
+      Response %in% c("j") ~ 1,
+    TRUE ~ NA_real_ # fallback for anything else 
+    ))
+```
+
+#### **Run ANOVA**
+
+```{r ANOVA}
+
+#run two-way repeated measures ANOVA using aov
+model.aov <- aov(
+  Response_num ~ Disposition * Proportion +
+    Error(ID / (Disposition * Proportion)),
+  data = A_data
+)
+summary(model.aov)
+
+lapply(A_data[, c("Disposition","Proportion","ID")], function(x) {
+  list(
+    class = class(x),
+    has_na = any(is.na(x)),
+    has_blank = any(x == "" )
+  )
+})
+
+
+effectsize(model.aov)
+```
+
+#### **Correlation**
+
+Correlation test of AQ-10 score and TestScore
+
+```{r correlation}
+# correlation test
+cor.test(AQScore, TestScore)
+```
+
+#### Plot Correlation
+
+```{r correlation plot}
+corplot <- ggplot(data_complete, aes(x = AQScore, y = ...60)) +
+  geom_jitter(width = 0.1, height = 0.05, color = "#d96627", alpha = 0.5) +
+  geom_smooth(method = "lm", se = FALSE, color = "#d96627") +
+  stat_cor(
+    method = "pearson",
+    label.x = Inf, label.y = Inf,
+    hjust = 1.1, vjust = 1.5,
+    color = "black"     # ensure text stays black
+  ) +
+  scale_y_continuous(breaks = c(0, 1, 2)) +
+  theme_classic() +
+  theme(
+    legend.position = "none",
+    
+    # Axis line color
+    axis.line = element_line(color = "darkgray"),
+    
+    # Tick mark color
+    axis.ticks = element_line(color = "darkgray"),
+    
+    # Axis text color
+    axis.text = element_text(color = "black"),
+    
+    # Title color
+    plot.title = element_text(color = "black", size = 14, face = "bold"),
+    
+    # Axis label color
+    axis.title = element_text(color = "black", size = 12)
+  ) +
+  labs(
+    x = "AQ-10 Score",
+    y = "Implicit Learning (Score Differences)",
+    title = "Correlation Between AQ-10 Score and Implicit Learning"
+  )
+corplot
+ggsave(
+  "corplot.png",
+  plot = corplot,
+  width = 6,    # inches
+  height = 4,   # inches
+  dpi = 300
+)
+
+```
+
+## Differences from Original Study
+
+The first difference between Jellema et al. (2024) and this replication was that Jellema et al. (2024) used the AQ, and this replication used the AQ-10. The AQ-10, which has 10 questions, has been validated as working as well as the 50 question original, so this is not expected to create differences in results. The most significant difference is that the replication stimuli used videos of a real person manipulated to slightly alter the actor's identity, creating identities A and B, while the original study used computer-generated face morphs. This may make a difference in the results as stimuli are centrally important to experimental results. Lastly, there were 56 trials in the replicated acquisition phase, but the number of trials in the original is unknown. While I have done my best to estimate how many trials there would be based on context in the original paper, if this is a significantly different number of trials, that could create differences in learning outcomes.
+
+## Methods Addendum (Post Data Collection)
+
+### Actual Sample
+
+37 participants were collected and nine were excluded, resulting in a final sample of 28 participants. This is close to the goal of 30 participants. Participants were excluded for detecting the contingencies in the experiment, reaction time on test trials below 400ms or above 30s, and attention check reaction times above 11s. Participants also would have been excluded for missing responses on the test trials, but no one had missing trials. The most common age for participants was between 35-44 years old. Additionally, 46% of participants were men.
+
+### Differences from pre-data collection methods plan
+
+Stimuli were not generated using Google Gemini, but instead videos were taken of a person and then manipulated to slightly alter the identity of the actor to create identities A and B. Additionally, the study took slightly less time than expected, averaging between 7-12 minutes.
+
+# Results
+
+## Data preparation
+
+To prepare the data, I used RStudio. Full data preparation code is shown below.
+
+### **Import .csv and Transpose**
+
+Data needs to be transformed into long format
+
+```{r import csv and transpose (data prep)}
+#import csv
+data <- read.csv(file = "/Users/wilderhartwell/Documents/jellema2024/data/final_data_JSON.csv", header = FALSE)
+
+                 
+#make tibble
+data <- tibble(data)
+
+#filter out empty rows that jsPsych sometimes adds
+data <- data %>%
+  mutate(across(everything(), ~na_if(.x, ""))) %>%
+  mutate(across(everything(), ~na_if(.x, " "))) %>%
+  mutate(across(everything(), ~na_if(.x, "NA"))) %>%
+  filter(!if_all(everything(), is.na))
+
+# tranpose tibble
+data_long <- as.data.frame(t(data))
+
+# Rename columns
+colnames(data_long) <- as.character(unlist(data_long[1, ]))  # make first row the column names
+data_long <- data_long[-1, ] 
+
+```
+
+### Parse JSONs
+
+The questionnaires output as JSONs that then need to be parsed before the data can be used.
+
+```{r parse JSONs (data prep)}
+# parse JSONs
+data_long <- data_long |>
+  mutate(
+    Question_parsed = map(Question, jsonlite::fromJSON)
+  ) |>
+  unnest_wider(Question_parsed)
+  
+data_long <- data_long |>
+  mutate(
+    Check_parsed = map(Check, jsonlite::fromJSON))|>
+  unnest_wider(Check_parsed)
+
+
+```
+
+### Replace Strings with Numeric
+
+```{r replace strings with numeric (data prep)}
+
+# Recode words into numeric values
+data_long <- data_long |>
+  mutate(Q1_num = case_when(
+      Question1 %in% c("Slightly Agree", "Definitely Agree") ~ 1,
+      Question1 %in% c("Slightly Disagree", "Definitely Disagree") ~ 0,
+    TRUE ~ NA_real_ # fallback for anything else 
+    )) |>
+    mutate(Q2_num = case_when(
+      Question2 %in% c("Slightly Agree", "Definitely Agree") ~ 1,
+      Question2 %in% c("Slightly Disagree", "Definitely Disagree") ~ 0,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(Q3_num = case_when(
+      Question3 %in% c("Slightly Agree", "Definitely Agree") ~ 1,
+      Question3 %in% c("Slightly Disagree", "Definitely Disagree") ~ 0,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(Q4_num = case_when(
+      Question4 %in% c("Slightly Agree", "Definitely Agree") ~ 1,
+      Question4 %in% c("Slightly Disagree", "Definitely Disagree") ~ 0,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(Q5_num = case_when(
+      Question5 %in% c("Slightly Agree", "Definitely Agree") ~ 1,
+      Question5 %in% c("Slightly Disagree", "Definitely Disagree") ~ 0,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(Q6_num = case_when(
+      Question6 %in% c("Slightly Agree", "Definitely Agree") ~ 1,
+      Question6 %in% c("Slightly Disagree", "Definitely Disagree") ~ 0,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(Q7_num = case_when(
+      Question7 %in% c("Slightly Agree", "Definitely Agree") ~ 1,
+      Question7 %in% c("Slightly Disagree", "Definitely Disagree") ~ 0,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(Q8_num = case_when(
+      Question8 %in% c("Slightly Agree", "Definitely Agree") ~ 1,
+      Question8 %in% c("Slightly Disagree", "Definitely Disagree") ~ 0,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(Q9_num = case_when(
+      Question9 %in% c("Slightly Agree", "Definitely Agree") ~ 1,
+      Question9 %in% c("Slightly Disagree", "Definitely Disagree") ~ 0,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(Q10_num = case_when(
+      Question10 %in% c("Slightly Agree", "Definitely Agree") ~ 1,
+      Question10 %in% c("Slightly Disagree", "Definitely Disagree") ~ 0,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(CheckQ1_num = case_when(
+      CheckQ1 %in% c("I do not know") ~ 0,
+      CheckQ1 %in% c("Negative") ~ 1,
+      CheckQ1 %in% c("Neutral") ~ 2,
+      CheckQ1 %in% c("Positive") ~ 3,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(CheckQ2_num = case_when(
+      CheckQ2 %in% c("I do not know") ~ 0,
+      CheckQ2 %in% c("Negative") ~ 1,
+      CheckQ2 %in% c("Neutral") ~ 2,
+      CheckQ2 %in% c("Positive") ~ 3,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(frown50_1_num = case_when(
+      frown50_1 %in% c("f") ~ 0,
+      frown50_1 %in% c("j") ~ 1,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(frown50_2_num = case_when(
+      frown50_2 %in% c("f") ~ 0,
+      frown50_2 %in% c("j") ~ 1,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(smile50_1_num = case_when(
+      smile50_1 %in% c("f") ~ 0,
+      smile50_1 %in% c("j") ~ 1,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(smile50_2_num = case_when(
+      smile50_2 %in% c("f") ~ 0,
+      smile50_2 %in% c("j") ~ 1,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(frown50_1_cor_num = case_when(
+      frown50_1_cor %in% c("FALSE") ~ 0,
+      frown50_1_cor %in% c("TRUE") ~ 1,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(frown50_2_cor_num = case_when(
+      frown50_2_cor %in% c("FALSE") ~ 0,
+      frown50_2_cor %in% c("TRUE") ~ 1,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(smile50_1_cor_num = case_when(
+      smile50_1_cor %in% c("FALSE") ~ 0,
+      smile50_1_cor %in% c("TRUE") ~ 1,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(smile50_2_cor_num = case_when(
+      smile50_2_cor %in% c("FALSE") ~ 0,
+      smile50_2_cor %in% c("TRUE") ~ 1,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(gender_num = case_when(
+      Q_gender %in% c("Woman") ~ 0,
+      Q_gender %in% c("Man") ~ 1,
+      Q_gender %in% c("Nonbinary/other") ~ 2,
+      TRUE ~ NA_real_
+    )) |>
+    mutate(age_num = case_when(
+      Q_age %in% c("18-24") ~ 0,
+      Q_age %in% c("25-34") ~ 1,
+      Q_age %in% c("35-44") ~ 2,
+      Q_age %in% c("45-54") ~ 3,
+      Q_age %in% c("55-64") ~ 4,
+      Q_age %in% c("65+") ~ 5,
+      TRUE ~ NA_real_
+    ))
+```
+
+### **Prepare main data frame**
+
+#### **Calculate Scores**
+
+```{r calculate scores (data prep)}
+
+#the difference between the frown and smile at 50/50 (used in correlation)
+FrownScore <- data_long$frown50_1_cor_num + data_long$frown50_2_cor_num #sum the frown score
+FrownScore #print the frown score
+SmileScore <- data_long$smile50_1_cor_num + data_long$smile50_2_cor_num #sum the smile score
+SmileScore #print the smile score
+
+TestScore <- FrownScore - SmileScore #calculate TestScore
+TestScore <- abs(TestScore) # turn negative numbers into positive numbers (absolute value)
+
+data_long <- bind_cols(data_long, TestScore)
+
+#Score the AQ-10
+AQScore <- rowSums(data_long[, c("Q1_num","Q2_num", "Q3_num", "Q4_num", "Q5_num", "Q6_num", "Q7_num", "Q8_num", "Q9_num", "Q10_num")])
+as.data.frame(AQScore)
+data_long <- bind_cols(data_long, AQScore)
+data_long <- data_long %>%
+  rename(AQScore = `...61`)
+
+#make tibble again
+data_long <- tibble(data_long)
+
+```
+
+#### **Exclude participants**
+
+```{r Exclude participants (data_prep)}
+# Calculate total participants and store it in n_total
+n_total <- n_distinct(data_long$ID)
+
+# Exclude for detecting contingencies
+excluded_detection <- data_long %>%
+  filter(CheckQ1 == "Positive" & CheckQ2 == "Negative") %>%
+  pull(ID)
+
+# Exclude participants that missed all 50/50 response trials
+excluded_missing <- data_long %>%
+  filter(is.na(frown50_1_num) & 
+         is.na(smile50_1_num) & 
+         is.na(frown50_2_num) & 
+         is.na(smile50_2_num)) %>%
+  pull(ID)
+
+
+# Collect initial exclusion IDs
+excluded_initial <- unique(c(excluded_detection, excluded_missing))
+
+# Remove these from main dataset before further checks
+data_complete <- data_long %>%
+  filter(!(ID %in% excluded_initial))
+
+
+# Exclude for out of range reaction time and failing attention checks
+rt_attention_cols  <- c("rt_attention_1", "rt_attention_2", "rt_attention_3", "rt_attention_4")
+acc_attention_cols <- c("attention_1",   "attention_2",   "attention_3",   "attention_4")
+rt_test_cols       <- c("rt_frown_1", "rt_smile_1", "rt_frown_2", "rt_smile_2")
+
+# Convert columns 
+data_complete <- data_complete %>%
+  mutate(across(all_of(c(rt_attention_cols, rt_test_cols)), ~ as.numeric(as.character(.))),
+         across(all_of(acc_attention_cols), ~ as.integer(as.character(.))))
+
+data_complete <- data_complete %>%
+  mutate(
+    fail_attention_rt  = if_any(all_of(rt_attention_cols),  ~ .x > 11000),
+    fail_attention_acc = if_any(all_of(acc_attention_cols), ~ .x == 0),
+    fail_test_rt       = if_any(all_of(rt_test_cols),       ~ (.x <= 400 | .x > 30000))
+  )
+
+# Build a table of participants and reasons for exclusion 
+
+# Helper: convert logical flags into reason labels
+reason_map <- c(
+  fail_detection      = "Detected Contingencies",
+  fail_missing        = "Missing All 50/50 Trials",
+  fail_attention_rt   = "Attention RT > 11000",
+  fail_attention_acc  = "Incorrect Attention Check",
+  fail_test_rt        = "Test Trial RT Out of Range"
+)
+
+# Initial exclusion table
+initial_df <- tibble(
+    ID = excluded_initial,
+    fail_detection = excluded_initial %in% excluded_detection,
+    fail_missing   = excluded_initial %in% excluded_missing
+) %>%
+    pivot_longer(
+        cols = starts_with("fail_"),
+        names_to = "flag",
+        values_to = "value"
+    ) %>%
+    filter(value) %>%
+    mutate(Reason = reason_map[flag] %||% NA_character_) %>%
+    select(ID, Reason)
+
+# DIAGNOSTIC — must be separate
+data_complete %>%
+  select(ID, starts_with("fail_")) %>%
+  pivot_longer(cols = starts_with("fail_"),
+               names_to = "flag", values_to = "value") %>%
+  count(flag, value)
+
+  
+# Build long-format table of later RT/ACC exclusions
+late_df <- data_complete %>%
+  select(ID, starts_with("fail_")) %>%
+  distinct() %>%
+  pivot_longer(
+    cols      = starts_with("fail_"),
+    names_to  = "flag",
+    values_to = "value"
+  ) %>%
+  filter(value == TRUE) %>%
+  mutate(
+    Reason = dplyr::recode(flag, !!!reason_map, .default = NA_character_)
+  ) %>%
+  select(ID, Reason)
+
+# Combine ALL reasons
+excluded_df_long <- bind_rows(initial_df, late_df) %>%
+  distinct()
+
+# Save excluded list
+write.csv(excluded_df_long, "excluded_participants_long.csv", row.names = FALSE)
+
+# 6. Final cleaned dataset
+all_excluded_ids <- unique(excluded_df_long$ID)
+
+data_complete <- data_long %>%
+  filter(!(ID %in% all_excluded_ids))
+
+# Print summary
+cat("======== EXCLUSION SUMMARY ========\n")
+cat("Total participants:", n_total, "\n")
+cat("Excluded:", length(all_excluded_ids), "\n")
+cat("Remaining:", n_distinct(data_complete$ID), "\n\n")
+
+cat("Sample of multi-reason exclusions:\n")
+print(head(excluded_df_long))
+
+```
+
+## Confirmatory analysis
+
+A two-way repeated measures ANOVA with DISPOSITION (2 levels) and PROPORTION (5 levels) as factors was performed on participant responses to the task. This test was used to compare the means of multiple groups to see if there was a significant difference between them. A correlation was tested between the AQ-10 and a measure of implicit learning. The measure of implicit learning was the difference between scores on the 50% identity A and 50% identity B trials in the frowning and smiling conditions. This correlation test was completed to examine the potential connection between autistic traits and performance on the task.
+
+There was no significant main effect of Disposition, meaning participants did not judge the smiling faces to be more like identity A (positive disposition), nor the frowning faces more like identity B (negative disposition). (F(1,27) = 1.223, p = 0.279, ηp^2^ = 0.04). There was also no main effect of Proportion (F(1,27) = 0.016, p = 0.9, ηp^2^ = 0.00). There was no significant interaction between disposition and proportion (F(1,27) = 0.759, p = 0.391, ηp^2^ = 0.03). Participants with higher autistic traits were expected to perform worse on the task, but this study found that AQ-10 scores and implicit learning were not significantly correlated (r(26) = -0.037, p = 0.851, 95% CI \[-0.405, 0.341\], two-tailed) (Figure 1).
+
+![Figure 1. The correlation between AQ-10 scores and the measure of implicit learning.](corplot.png)
+
+### Exploratory analyses
+
+As depicted in Figure 2., the majority of participants performed at chance on the task. However, 10 participants scored below chance, while only six participants scored above chance. The mean task performance is 1.75 out of four points, which is below chance.
+
+![Figure 2. The frequency of total scores on the 50% identity A and 50% identity B test trials.](myplot.png){fig-align="left" width="553"}
+
+The mean score of 5.93 on the AQ-10 for this sample is very close to the threshold for possible autism of six out of 10 points. This shows a relatively high level of autistic traits in the sample. Looking at Figure 3., we can see that the most common score was seven, which is above the threshold. This means the majority of scores were at or above the threshold.
+
+![Figure 3. Distribution of AQ-10 scores.](AQ-10distribution.png)
+
+# Discussion
+
+## Summary of Replication Attempt
+
+My analyses found no main effect of disposition or proportion, contrary to Jellema et al. (2024) that found a main effect of both. Additionally, there was no correlation between AQ-10 scores and implicit learning. These results mean that Jellema et al. (2024) did not replicate here.
+
+## Commentary
+
+One reason that the results did not replicate may have been that it was too challenging to tell the difference between the two identities. Jellema et al. (2024) indicated that the differences between identities A and B were subtle, but they may have made subtle changes to the nose and mouth, which I was not able to do because it would have distorted other aspects of the face in strange ways. I was only able to make changes to the upper half of the face, mostly changing the eyes. While the objective was for participants to identify the face based on the disposition towards them and not based on the facial features, it's possible that having too little differences between the two faces made it too hard to learn who had which disposition.
+
+The possibility that the two faces were too hard to distinguish is partially supported by 22 out of 28 participants scoring at or below chance with 10 of them scoring below chance. In particular, participants scoring below chance could indicate that they actually learned the inverse pattern, attributing the frowning face to the positive disposition and the smiling face to the negative disposition.
+
+Another potential reason that most participants performed at chance was that there may not have been enough trials for learning to occur. However, I am concerned that more trials would have led more people to detect the contingencies in the experiment as four people detected the contingencies with the current number of trials.

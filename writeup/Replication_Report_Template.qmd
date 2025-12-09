@@ -1,12 +1,17 @@
 ---
 title: "Replication of Social Intuition: Behavioral and Neurobiological Considerations by Jellema et al. (2024, Frontiers in Psychology)"
 author: "Wilder Hartwell (wphartwell@ucsd.edu)"
-date: "`r format(Sys.time(), '%B %d, %Y')`"
+date: today
 format:
   html:
     toc: true
-    toc_depth: 3
+    toc-depth: 3
 ---
+
+
+```{r}
+library(DescTools)
+```
 
 # Introduction
 

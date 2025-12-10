@@ -1,17 +1,12 @@
 ---
 title: "Replication of Social Intuition: Behavioral and Neurobiological Considerations by Jellema et al. (2024, Frontiers in Psychology)"
 author: "Wilder Hartwell (wphartwell@ucsd.edu)"
-date: today
+date: "`r format(Sys.time(), '%B %d, %Y')`"
 format:
   html:
     toc: true
     toc-depth: 3
 ---
-
-
-```{r}
-library(DescTools)
-```
 
 # Introduction
 
@@ -23,12 +18,6 @@ In the acquisition phase, face morphs of dynamic facial expressions (happy or an
 
 # Methods
 
-35 adult participants were recruited for this study. The study was run on Prolific and participants were compensated for their time. The experiment took approximately 10-15 minutes to complete. Google Gemini was used to generate the face morph stimuli. The experiment was coded in JsPsych.
-
-There were two blocks of 28 trials in the acquisition phase. In the acquisition phase, the happy face condition started with gaze forward, smiling, and gradually shifted to gaze away from the participant, frowning. The angry condition started with gaze forward, frowning, and gradually shifted to gaze away from the participant, smiling. The clips were 2s long.
-
-There were four blocks of 5 trials in the test phase. The test phase began with a combined face vertically divided into 60% maximally smiling identity A and 40% maximally smiling identity B and progressed in steps of 5% towards 60% maximally smiling identity B and 40% maximally smiling identity A. Participants saw this four times. Then the same thing was repeated for the frowning faces, and the participants saw this four times as well. Participants were asked to judge the likeness of these composite faces to the neutral faces of identities A and B. At the end, participants were asked questions probing whether they detected the contingencies in the experiment and if they did their data was excluded.
-
 ## Power Analysis
 
 In RStudio, an ANOVA power analysis using the smallest original main effect of ηp^2^ = 0.12 (disposition) found that I would need 30 participants to achieve a power of 80%. Thus, I planned to recruit 35 participants to account for exclusions. This is a feasible number of participants to recruit with the resources available.
@@ -39,7 +28,9 @@ I plan to collect 35 participants on Prolific in one day. No screening will occu
 
 ## Materials
 
-> Participants were presented with short video clips (2 s) depicting the frontal face view of an actor (agent A or agent B; Figure 1). Their facial expressions and gaze directions changed smoothly over the course of the clips, displaying a natural facial movement. (Jellema et al., 2024, p. 5)
+Google Gemini was used to generate the face morph stimuli. The experiment was coded in JsPsych.
+
+> Participants were presented with short video clips (2s) depicting the frontal face view of an actor (agent A or agent B; Figure 1). Their facial expressions and gaze directions changed smoothly over the course of the clips, displaying a natural facial movement. (Jellema et al., 2024, p. 5)
 >
 > Actor A started with a happy expression looking straight ahead (at the observer), which then gradually morphed into an angry expression, while simultaneously the eye direction gradually moved away from the observer (so that in the final frame the actor looked angry away from the observer). The clips were also played backwards an equal number of times. Thus, it can be said that agent A had a positive disposition toward the observer. Agent B started with a happy expression looking away from the observer, which gradually morphed into an angry expression, while simultaneously the eye direction gradually moved toward the observer (clips were also played backwards an equal number of times). Actor B thus had a negative disposition toward the observer. (Jellema et al., 2024, p. 5)
 
@@ -57,9 +48,13 @@ This was followed in the replication. Specifically, there were two questions tha
 
 ## Procedure
 
-First, participants signed the consent form and then answered the AQ-10. The experiment began with instructions that showed participants identities A and B making neutral faces side by side, in addition to instructing them to focus on the videos and be ready for attention checks. Next, participants were shown the video clips (described in materials) forwards and backwards the same number of times and in a randomized order. There were 56 acquisition trials split across two blocks with a break in between. There were four attention checks spaced roughly evenly across the acquisition trials that asked participants to select the correct color word (i.e. If you are paying attention, select 'yellow.'). The test trials began with a screen displaying the instructions. Then, participants were shown each set of five test images two times, alternating between the smiling and frowning conditions. Next, participants answered two questions probing whether they had detected the contingencies in the experiment. Lastly, participants were debriefed and provided their completion information for Prolific.
+First, participants signed the consent form and then answered the AQ-10. The experiment began with instructions that showed participants identities A and B making neutral faces side by side, in addition to instructing them to focus on the videos and be ready for attention checks. Next, participants were shown the video clips (described in materials) forwards and backwards the same number of times and in a randomized order. There were 56 acquisition trials split across two blocks with a break in between. There were four attention checks spaced roughly evenly across the acquisition trials that asked participants to select the correct color word (i.e. If you are paying attention, select 'yellow.'). The test trials began with a screen displaying the instructions. Then, participants were shown each set of five test images two times, alternating between the smiling and frowning conditions. Next, participants answered two questions probing whether they had detected the contingencies in the experiment. Lastly, participants were debriefed and provided their completion information for Prolific. The experiment took approximately 10-15 minutes to complete.
 
 ## Analysis Plan
+
+The first few steps of preparing the data for analysis is importing the data and parsing the JSONs that the questionnaire data is imported as. Additionally, strings need to be converted into numeric data for successful analysis. Next, the implicit learning measure is calculated, as well as total scores on the AQ-10. Then, participants are excluded. Participants are excluded for detecting the contingencies in the experiment, answering too fast or too slow on the test trials, missing responses on the test trials, failing attention checks, and taking too long to complete attention checks. Then, I move on to analysis.
+
+The analysis begins with viewing the demographic data from the sample. Next, means of scores on the questionnaire and test trials are calculated. Then plots of accuracy and AQ-10 scores are created to get a visual sense of the distribution of the data. Following this, a figure comparing mean scores on each proportion across dispositions is created. Then, the key analysis, a two-way repeated measures ANOVA, is performed. Lastly, the correlation between autistic traits (AQ-10) and implicit learning is assessed and graphed. Below is the code used to prepare the data and perform the data analysis.
 
 ### **Load packages**
 
@@ -83,7 +78,7 @@ Data needs to be transformed into long format
 
 ```{r import csv and transpose}
 #import csv
-data <- read.csv(file = "/Users/wilderhartwell/Documents/jellema2024/data/final_data_JSON.csv", header = FALSE)
+data <- read.csv(file = "/Users/wilderhartwell/Documents/jellema2024/data/Data_collection_1/final_data_JSON.csv", header = FALSE)
 
                  
 #make tibble
@@ -561,6 +556,92 @@ A_data <- A_data |>
       Response %in% c("j") ~ 1,
     TRUE ~ NA_real_ # fallback for anything else 
     ))
+
+```
+
+#### Score correct responses and create figure
+
+```{r score correct responses and create figure}
+# score correct responses and create figure
+
+# Load data
+correct_response <- read.csv("/Users/wilderhartwell/Documents/jellema2024/data/Data_collection_1/correct_response.csv")
+
+# Merge A_data with correct-response key
+A_scored <- A_data %>%
+  left_join(correct_response, by = "Proportion")
+
+# Create accuracy column (1 = correct, -1 = incorrect)
+A_scored <- A_scored %>%
+  mutate(
+    accuracy = if_else(Response == CorrectResponse, 1, -1)
+  )
+# Get mean score for each proportion across dispositions
+accuracy_summary <- A_scored %>%
+  group_by(Disposition.y, Proportion) %>%   
+  summarise(
+    mean_accuracy = mean(accuracy, na.rm = TRUE),
+    n = n(),                               
+    se = sd(accuracy, na.rm = TRUE) / sqrt(n)  
+  )
+
+#export CSV to rename Proportion values
+write.csv(accuracy_summary, file = "accuracy_summary.csv")
+
+#import CSV back in to use in the graph
+accuracy_summary <- read.csv(file = "/Users/wilderhartwell/Documents/jellema2024/writeup/accuracy_summary.csv")
+
+# set correct factor structure to ensure x axis is correctly displayed
+accuracy_summary$Proportion <- factor(
+  accuracy_summary$Proportion,
+  levels = c("60% A 40% B", 
+             "55% A 45% B",
+             "50% A 50% B",
+             "45% A 55% B",
+             "40% A 60% B"))
+#create graph
+jellemaplot <- ggplot(accuracy_summary, aes(x = Proportion, y = mean_accuracy, color = Disposition.y, group = Disposition.y)) +
+  
+  geom_line(size = 1.4) +
+  
+  scale_color_manual(
+    values = c(
+      "frown" = "#B22222",  # deep red
+      "smile"  = "#1E90FF"   # blue
+    ),
+    name = NULL,
+    labels = c("frowning morph", "smiling morph")
+  ) +
+  
+  scale_y_continuous(limits = c(-1, 1), breaks = seq(-1, 1, 0.2)) +
+  
+  labs(
+    title = "Social",
+    y = "mean score",
+    x = "morph proportion"
+  ) +
+  
+  theme_classic() +
+  theme(
+    plot.title = element_text(size = 22, hjust = 0.5, face = "bold"),
+    legend.position = "top",
+    legend.text = element_text(size = 14),
+    axis.title = element_text(size = 14),
+    axis.text  = element_text(size = 12),
+    axis.line  = element_line(color = "black"),
+    panel.grid.major = element_line(color = "gray85"),
+    panel.grid.minor = element_blank()
+  )
+jellemaplot # Show graph
+
+# Save graph
+ggsave(
+  "jellemaplot.png",
+  plot = jellemaplot,
+  width = 6.5,    # inches
+  height = 4,   # inches
+  dpi = 300
+)
 ```
 
 #### **Run ANOVA**
@@ -587,7 +668,7 @@ lapply(A_data[, c("Disposition","Proportion","ID")], function(x) {
 effectsize(model.aov)
 ```
 
-#### **Correlation**
+### **Correlation**
 
 Correlation test of AQ-10 score and TestScore
 
@@ -646,7 +727,7 @@ ggsave(
 
 ## Differences from Original Study
 
-The first difference between Jellema et al. (2024) and this replication was that Jellema et al. (2024) used the AQ, and this replication used the AQ-10. The AQ-10, which has 10 questions, has been validated as working as well as the 50 question original, so this is not expected to create differences in results. The most significant difference is that the replication stimuli used videos of a real person manipulated to slightly alter the actor's identity, creating identities A and B, while the original study used computer-generated face morphs. This may make a difference in the results as stimuli are centrally important to experimental results. Lastly, there were 56 trials in the replicated acquisition phase, but the number of trials in the original is unknown. While I have done my best to estimate how many trials there would be based on context in the original paper, if this is a significantly different number of trials, that could create differences in learning outcomes.
+The first difference between Jellema et al. (2024) and this replication was that Jellema et al. (2024) used the AQ, and this replication used the AQ-10. The AQ-10, which has 10 questions, has been validated as working as well as the 50 question original, so this is not expected to create differences in results. The most significant difference is that the replication stimuli used videos of a real person manipulated to slightly alter the actor's identity, creating identities A and B, while the original study used computer-generated face morphs. This may make a difference in the results as stimuli are centrally important to experimental results. Additionally, there were 56 trials in the replicated acquisition phase, but the number of trials in the original is unknown. While I have done my best to estimate how many trials there would be based on context in the original paper, if this is a significantly different number of trials, that could create differences in learning outcomes. Lastly, there was a nonsocial task in Jellema et al. (2024) that I did not attempt to replicate in this study due to tight time and feasability constraints.
 
 ## Methods Addendum (Post Data Collection)
 
@@ -670,7 +751,7 @@ Data needs to be transformed into long format
 
 ```{r import csv and transpose (data prep)}
 #import csv
-data <- read.csv(file = "/Users/wilderhartwell/Documents/jellema2024/data/final_data_JSON.csv", header = FALSE)
+data <- read.csv(file = "/Users/wilderhartwell/Documents/jellema2024/data/Data_collection_1/final_data_JSON.csv", header = FALSE)
 
                  
 #make tibble
@@ -990,25 +1071,29 @@ print(head(excluded_df_long))
 
 A two-way repeated measures ANOVA with DISPOSITION (2 levels) and PROPORTION (5 levels) as factors was performed on participant responses to the task. This test was used to compare the means of multiple groups to see if there was a significant difference between them. A correlation was tested between the AQ-10 and a measure of implicit learning. The measure of implicit learning was the difference between scores on the 50% identity A and 50% identity B trials in the frowning and smiling conditions. This correlation test was completed to examine the potential connection between autistic traits and performance on the task.
 
-There was no significant main effect of Disposition, meaning participants did not judge the smiling faces to be more like identity A (positive disposition), nor the frowning faces more like identity B (negative disposition). (F(1,27) = 1.223, p = 0.279, ηp^2^ = 0.04). There was also no main effect of Proportion (F(1,27) = 0.016, p = 0.9, ηp^2^ = 0.00). There was no significant interaction between disposition and proportion (F(1,27) = 0.759, p = 0.391, ηp^2^ = 0.03). Participants with higher autistic traits were expected to perform worse on the task, but this study found that AQ-10 scores and implicit learning were not significantly correlated (r(26) = -0.037, p = 0.851, 95% CI \[-0.405, 0.341\], two-tailed) (Figure 1).
+There was no significant main effect of Disposition, meaning participants did not judge the smiling faces to be more like identity A (positive disposition), nor the frowning faces more like identity B (negative disposition). (F(1,27) = 1.223, p = 0.279, ηp^2^ = 0.04). There was also no main effect of Proportion (F(1,27) = 0.016, p = 0.9, ηp^2^ = 0.00). There was no significant interaction between disposition and proportion (F(1,27) = 0.759, p = 0.391, ηp^2^ = 0.03). See how participants performed for each disposition and proportion in the replication compared to Jellema et al. (2024) in Figure 1.
 
-![Figure 1. The correlation between AQ-10 scores and the measure of implicit learning.](corplot.png)
+![](comparison plot.png)
+
+Participants with higher autistic traits were expected to perform worse on the task, but this study found that AQ-10 scores and implicit learning were not significantly correlated (r(26) = -0.037, p = 0.851, 95% CI \[-0.405, 0.341\], two-tailed) (Figure 2).
+
+![Figure 2. The correlation between AQ-10 scores and the measure of implicit learning.](corplot.png)
 
 ### Exploratory analyses
 
-As depicted in Figure 2., the majority of participants performed at chance on the task. However, 10 participants scored below chance, while only six participants scored above chance. The mean task performance is 1.75 out of four points, which is below chance.
+As depicted in Figure 3., the majority of participants performed at chance on the task. However, 10 participants scored below chance, while only six participants scored above chance. The mean task performance is 1.75 out of four points, which is below chance.
 
-![Figure 2. The frequency of total scores on the 50% identity A and 50% identity B test trials.](myplot.png){fig-align="left" width="553"}
+![Figure 3. Distribution of total scores on test trials.](accdistribution.png)
 
-The mean score of 5.93 on the AQ-10 for this sample is very close to the threshold for possible autism of six out of 10 points. This shows a relatively high level of autistic traits in the sample. Looking at Figure 3., we can see that the most common score was seven, which is above the threshold. This means the majority of scores were at or above the threshold.
+The mean score of 5.93 on the AQ-10 for this sample is very close to the threshold for possible autism of six out of 10 points. This shows a relatively high level of autistic traits in the sample. Looking at Figure 4., we can see that the most common score was seven, which is above the threshold. This means the majority of scores were at or above the threshold.
 
-![Figure 3. Distribution of AQ-10 scores.](AQ-10distribution.png)
+![Figure 4. Distribution of AQ-10 scores.](AQ-10distribution.png)
 
 # Discussion
 
 ## Summary of Replication Attempt
 
-My analyses found no main effect of disposition or proportion, contrary to Jellema et al. (2024) that found a main effect of both. Additionally, there was no correlation between AQ-10 scores and implicit learning. These results mean that Jellema et al. (2024) did not replicate here.
+My analyses found no main effect of disposition or proportion, contrary to Jellema et al. (2024) that found a main effect of both. Neither study found an interaction effect. Additionally, the replication found no correlation between AQ-10 scores and implicit learning. These results mean that Jellema et al. (2024) did not replicate.
 
 ## Commentary
 
